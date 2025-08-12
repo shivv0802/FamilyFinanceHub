@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { dropSearchIndex } = require('./user.model')
 
 const categorySchema = new mongoose.Schema({
     name: {

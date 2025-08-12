@@ -51,4 +51,4 @@ const validateUserData = [
   }
 ];
 
-module.exports = { validateUserData };
+module.exports =  validateUserData ;

@@ -6,7 +6,7 @@ const NotFoundError = require('../error/NotFound')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-async function validateUserData(req, res, next){
+async function authenticateUserData(req, res, next){
     try {
       const { authorization } = req.headers;
 
@@ -47,4 +47,4 @@ async function validateUserData(req, res, next){
 
 
 
-module.exports = validateUserData;
+module.exports = authenticateUserData;
