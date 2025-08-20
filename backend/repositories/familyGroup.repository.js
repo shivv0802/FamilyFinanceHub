@@ -33,6 +33,7 @@ async function updateFamilyGroupRepo(id, updateData) {
         const updatedGroup = await FamilyGroup.findByIdAndUpdate(id, updateData, { new: true });
         return updatedGroup;
     } catch (error) {
+        console.log(error)
         throw error;
     }
 }

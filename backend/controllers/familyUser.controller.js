@@ -39,6 +39,7 @@ async function getUsersByFamilyGroup(req, res, next) {
 async function getFamilyGroupsByUser(req, res, next) {
     try {
         const groups = await getFamilyGroupsByUserService(req.params.userId);
+        console.log("User's Family Groups:", groups);
         return baseController.sendJSONResponse(res, {}, "User's family groups retrieved successfully", groups);
     } catch (error) {
         return baseController.sendErrorResponse(res, error);
@@ -48,6 +49,7 @@ async function getFamilyGroupsByUser(req, res, next) {
 // Update role or membership info
 async function updateFamilyGroupUser(req, res, next) {
     try {
+        
         const updated = await updateFamilyGroupUserService(req.params.id, req.body);
         return baseController.sendJSONResponse(res, {}, "Family group member updated successfully", updated);
     } catch (error) {

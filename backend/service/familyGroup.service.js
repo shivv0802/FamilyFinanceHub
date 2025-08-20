@@ -33,8 +33,9 @@ async function getAllFamilyGroupsService() {
 
 async function updateOneFamilyGroupService(id, updateData) {
     const updatedGroup = await updateFamilyGroupRepo(id, updateData);
-    if (!updatedGroup) throw new NotFound("NotFound", "Unable to update - Family group not found");
-    return updatedGroup;
+
+    if (!updatedGroup) throw new NotFound("NotFound", "Unable to update - Family group not found")
+    return updatedGroup
 }
 
 async function deleteOneFamilyGroupService(id) {

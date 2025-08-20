@@ -49,7 +49,11 @@ async function getAllFamilyGroups(req, res, next) {
 // Update Family Group
 async function updateFamilyGroup(req, res, next) {
     try {
-        const updatedGroup = await updateOneFamilyGroupService(req.params.id, req.body)
+        const data = {
+            groupName: req.body.groupName,
+            description: req.body.description
+        }
+        const updatedGroup = await updateOneFamilyGroupService(req.params.id, data)
         return baseController.sendJSONResponse(res, {}, "Family group updated successfully", updatedGroup)
     } catch (error) {
         return baseController.sendErrorResponse(res, error);

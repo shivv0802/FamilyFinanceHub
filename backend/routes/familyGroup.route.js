@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+const authenticateUserData = require('../middleware/authenticate.midddleware')
+const authorizeFamilyAdmin = require('../middleware/authorizeFamilyAdmin')
+
 const {
     createFamilyGroup,
     getFamilyGroup,
@@ -9,19 +12,19 @@ const {
     deleteFamilyGroup
 } = require('../controllers/familyGroup.controller');
 
-// Create a family group
-router.post('/', createFamilyGroup);
 
-// Get one family group by ID
-router.get('/:id', getFamilyGroup);
+router.post('/', authenticateUserData, createFamilyGroup);
 
-// Get all family groups
-router.get('/', getAllFamilyGroups);
 
-// Update family group
-router.put('/:id', updateFamilyGroup);
+router.get('/:id', authenticateUserData, getFamilyGroup)
 
-// Delete family group
-router.delete('/:id', deleteFamilyGroup);
+
+router.get('/', authenticateUserData, getAllFamilyGroups)
+
+
+router.put('/:id', authenticateUserData, authorizeFamilyAdmin, updateFamilyGroup)
+
+
+router.delete('/:id',authenticateUserData,authorizeFamilyAdmin, deleteFamilyGroup)
 
 module.exports = router;

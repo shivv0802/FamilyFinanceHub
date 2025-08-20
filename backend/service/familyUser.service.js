@@ -31,7 +31,7 @@ async function getUsersByFamilyGroupService(familyGroupId) {
 
 async function getFamilyGroupsByUserService(userId) {
     if (!userId) throw new BadRequest("BadRequest", "userId is required");
-
+    console.log("Fetching family groups for user:", userId);
     const groups = await getFamilyGroupsByUserRepo(userId);
     return groups;
 }
