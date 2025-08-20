@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const categorySchema = new mongoose.Schema({
     name: {
         type: String,
-        enum : ['Food', 'Transport', 'Entertainment', 'Health', 'Utilities', 'Education', 'Clothing', 'Miscellaneous'],
+        enum : ['Job','Business','Food', 'Transport', 'Entertainment', 'Health', 'Utilities', 'Education', 'Clothing', 'Miscellaneous'],
         required: true
     },
     description: {
