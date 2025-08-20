@@ -11,12 +11,10 @@ const {
 } = require('../repositories/familyGroup.repository');
 
 
-async function createOneFamilyGroupService({ groupId, groupName, description }) {
-    if (!groupId || !groupName) {
-        throw new BadRequest("BadRequest", "groupId and groupName are required");
-    }
+async function createOneFamilyGroupService({ groupName, description }) {
+   
 
-    const group = await createFamilyGroupRepo({ groupId, groupName, description });
+    const group = await createFamilyGroupRepo({  groupName, description });
     if (!group) {
         throw new InternalServerError("InternalServerError", "Failed to create family group");
     }
