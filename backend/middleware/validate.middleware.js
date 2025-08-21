@@ -2,6 +2,9 @@ const { checkSchema, validationResult } = require('express-validator');
 const User = require('../models/user.model');
 const BadRequest = require('../error/BadRequest');
 
+// we can also use second parameter of checkSchema to validate the data instead of error message.
+//if we use body instead of check schema then we use either .withMessage or .custom to validate or second parameters.
+
 const validateUserData = [
   checkSchema({
     firstName: {

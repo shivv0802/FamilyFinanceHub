@@ -4,10 +4,10 @@ async function createUserRepo(data) {
   try {
   
     const user = await User.create(data);
-    console.log(user, "user in repository");
+    
     return user;
   } catch (error) {
-   console.log(error, "error in user repository");
+   
     throw error; // let the real error bubble up
   }
 }

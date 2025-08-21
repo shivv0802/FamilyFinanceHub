@@ -15,7 +15,7 @@ async function addUserToFamilyGroup(req, res, next) {
         const data = {
             userId: req.body.userId,
             familyGroupId: req.body.familyGroupId,
-            isAdmin: req.body.isAdmin || false
+            isAdmin: req.user.userRole === 'admin'
         };
 
         const member = await addUserToFamilyGroupService(data);

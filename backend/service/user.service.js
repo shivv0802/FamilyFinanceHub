@@ -7,16 +7,17 @@ const {generateToken} = require('../utils/jwt.utils');
 
 async function createOneUserService(data) {
 
-    const { firstName, lastName,mobileNumber, password} = data;
+    const { firstName, lastName,mobileNumber, password, role} = data;
     const hashedPassword = await bcryptPasswordGenerate(password);
   
     const user = await createUserRepo({
         firstName,
         lastName,
         mobileNumber, 
-        password: hashedPassword
+        password: hashedPassword,
+        role
     });
-   console.log(user, "user in service");
+   
     if (!user) {
 
         throw new InternalServerError("Internal Server Error", "Something Went Wrong")
@@ -31,7 +32,7 @@ async function loginOneUserService(data) {
 
     const user = await getUserByNumber(mobileNumber);
 
-    if (!user) throw new BadRequest("BadRequest", "No user is registered via this email");
+    if (!user) throw new BadRequest("BadRequest", "No user is registered via this mobile number");
     //here we can directly call the generalError class it is ok but for the reusability and maintainability 
     //we call user not found and it will also make the code cleaner
     

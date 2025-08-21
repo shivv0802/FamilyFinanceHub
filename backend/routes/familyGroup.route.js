@@ -13,7 +13,7 @@ const {
 } = require('../controllers/familyGroup.controller');
 
 
-router.post('/', authenticateUserData, createFamilyGroup);
+router.post('/', authenticateUserData,authorizeFamilyAdmin,  createFamilyGroup);
 
 
 router.get('/:id', authenticateUserData, getFamilyGroup)
