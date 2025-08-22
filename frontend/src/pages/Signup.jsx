@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+
 import { signup } from '../services/api';
 import '../styles/signup.css';
 
+import { useNavigate } from 'react-router-dom';
+
+
 const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -74,6 +79,7 @@ const Signup = () => {
         type: 'success',
         text: response.message || 'Signup successful! Welcome to Family Finance Hub.'
       });
+
       
       // Clear form on success
       setFormData({
@@ -84,6 +90,9 @@ const Signup = () => {
         role: 'user'
       });
       
+       setTimeout(() => {
+    navigate('/login');
+  }, 1000);
     } catch (error) {
       setMessage({
         type: 'error',
