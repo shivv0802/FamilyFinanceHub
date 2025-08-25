@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 import {
   getUsersByFamilyGroup,
   addUserToFamilyGroup,
@@ -7,24 +9,38 @@ import {
   removeUserFromFamilyGroup,
 } from "../services/familyUserApi";
 import "../styles/familyUser.css";
-import { useNavigate } from "react-router-dom";
 
 export default function FamilyUser() {
   const { familyGroupId } = useParams();
   const [users, setUsers] = useState([]);
-  const [formData, setFormData] = useState({ userId: "", isAdmin: false });
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    mobileNumber: "",
+    password: "",
+    role: "user",
+  });
   const [editingUser, setEditingUser] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
-  const [currentUserRole, setCurrentUserRole] = useState(""); // admin/user
+  const [currentUserRole, setCurrentUserRole] = useState("user");
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Decode token to get role
   useEffect(() => {
-    const role = localStorage.getItem("role") || "user";
-    setCurrentUserRole(role);
-  }, []);
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setCurrentUserRole(decoded.role || "user");
+      } catch {
+        setCurrentUserRole("user");
+      }
+    } else {
+      setCurrentUserRole("user");
+    }
+  }, [token]);
 
   const fetchUsers = async () => {
     try {
@@ -34,41 +50,54 @@ export default function FamilyUser() {
       setMessage({ type: "error", text: err?.message || "Failed to load users" });
     }
   };
-useEffect(() => {
-  const fetchUsers = async () => {
-    try {
-      const res = await getUsersByFamilyGroup(familyGroupId, token);
-      setUsers(res.data);
-    } catch (err) {
-      setMessage({ type: "error", text: err?.message || "Failed to load users" });
-    }
-  };
-  fetchUsers();
-}, [familyGroupId, token]);
 
+  useEffect(() => {
+    fetchUsers();
+    // eslint-disable-next-line
+  }, [familyGroupId, token]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       let res;
-      if (editingUser) {
-        res = await updateFamilyGroupUser(editingUser._id, formData, token);
-      } else {
-        res = await addUserToFamilyGroup({ ...formData, familyGroupId }, token);
+
+      // Build data to send
+      // Optional: only include password if not empty for updates
+      const dataToSend = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        mobileNumber: formData.mobileNumber,
+        role: formData.role,
+      };
+      if (formData.password) {
+        dataToSend.password = formData.password;
       }
 
+      if (editingUser) {
+        res = await updateFamilyGroupUser(editingUser._id, dataToSend, token);
+      } else {
+        res = await addUserToFamilyGroup(
+          { ...dataToSend, familyGroupId },
+          token
+        );
+      }
       setMessage({ type: "success", text: res.message });
-      setFormData({ userId: "", isAdmin: false });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        mobileNumber: "",
+        password: "",
+        role: "user",
+      });
       setEditingUser(null);
       fetchUsers();
     } catch (err) {
@@ -81,14 +110,17 @@ useEffect(() => {
   const handleEdit = (user) => {
     setEditingUser(user);
     setFormData({
-      userId: user.userId._id,
-      isAdmin: user.isAdmin,
+      firstName: user.userId.firstName,
+      lastName: user.userId.lastName,
+      mobileNumber: user.userId.mobileNumber,
+      password: "",
+      role: user.role || "user",
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to remove this user?")) return;
-
     try {
       const res = await removeUserFromFamilyGroup(id, token);
       setMessage({ type: "success", text: res.message });
@@ -102,7 +134,7 @@ useEffect(() => {
     <div className="family-group-wrapper">
       {/* Sidebar */}
       <div className="sidebar">
-        <h2>Family Hub</h2>
+        <h2 style={{ cursor: "pointer" }}>Family Hub</h2>
         <ul>
           <li onClick={() => navigate("/familyGroup")}>Family Groups</li>
           <li>Expenses</li>
@@ -126,12 +158,33 @@ useEffect(() => {
             <h2>{editingUser ? "Update Member" : "Add New Member"}</h2>
 
             <div className="form-group">
-              <label htmlFor="userId">User ID</label>
+              <label>First Name</label>
               <input
                 type="text"
-                id="userId"
-                name="userId"
-                value={formData.userId}
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Mobile Number</label>
+              <input
+                type="tel"
+                name="mobileNumber"
+                value={formData.mobileNumber}
                 onChange={handleChange}
                 required
               />
@@ -139,14 +192,23 @@ useEffect(() => {
 
             <div className="form-group">
               <label>
-                <input
-                  type="checkbox"
-                  name="isAdmin"
-                  checked={formData.isAdmin}
-                  onChange={handleChange}
-                />
-                Is Admin
+                Password {editingUser ? "(Leave blank to keep unchanged)" : ""}
               </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                {...(!editingUser && { required: true })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Role</label>
+              <select name="role" value={formData.role} onChange={handleChange}>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
 
             <button type="submit" className="submit-btn" disabled={loading}>
@@ -163,7 +225,13 @@ useEffect(() => {
                 className="cancel-btn"
                 onClick={() => {
                   setEditingUser(null);
-                  setFormData({ userId: "", isAdmin: false });
+                  setFormData({
+                    firstName: "",
+                    lastName: "",
+                    mobileNumber: "",
+                    password: "",
+                    role: "user",
+                  });
                 }}
               >
                 Cancel
@@ -201,7 +269,7 @@ useEffect(() => {
                         onClick={() => handleDelete(user._id)}
                         className="delete-btn"
                       >
-                        Remove
+                        Delete
                       </button>
                     </div>
                   )}
@@ -210,31 +278,25 @@ useEffect(() => {
             </ul>
           )}
 
-          {/* Admin Actions */}
-          {currentUserRole === "admin" && users.length > 0 && (
-            <div className="admin-actions">
-              <button
-                className="submit-btn"
-                onClick={() => {
-                  setEditingUser(null);
-                  setFormData({ userId: "", isAdmin: false });
-                }}
-              >
-                Create User
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => alert("Select a user above to delete")}
-              >
-                Delete User
-              </button>
-              <button
-                className="edit-btn"
-                onClick={() => alert("Select a user above to update")}
-              >
-                Update User
-              </button>
-            </div>
+          {/* Add Member Button, shown after user list */}
+          {currentUserRole === "admin" && !editingUser && (
+            <button
+              className="submit-btn"
+              style={{ marginTop: "16px" }}
+              onClick={() => {
+                setEditingUser(null);
+                setFormData({
+                  firstName: "",
+                  lastName: "",
+                  mobileNumber: "",
+                  password: "",
+                  role: "user",
+                });
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              Add Member
+            </button>
           )}
         </div>
       </div>
