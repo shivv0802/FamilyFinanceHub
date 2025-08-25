@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
-const Unauthorized = require('../error/Unauthorized');
+const BadRequest = require('../error/BadRequest');
 
 
 async function bcryptPasswordCheck(inputPassword, hashedPassword) {
 
     const isMatch = await bcrypt.compare(inputPassword, hashedPassword);
-    if (!isMatch) throw new Unauthorized("Unauthorized", "Invalid Password");
+    if (!isMatch) throw new BadRequest("Invalid Password");
     return true;
 }
 

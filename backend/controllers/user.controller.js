@@ -27,7 +27,9 @@ async function loginUser(req,res ,next) {
 
     return baseController.sendJSONResponse( res,{},"Login successful",token );
   } catch (error) {
-    return baseController.sendErrorResponse(res, error);  // Pass the error to the next middleware for centralized error handling
+
+      next(error)
+     // Pass the error to the next middleware for centralized error handling
   }
 }
 

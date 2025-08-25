@@ -32,13 +32,13 @@ async function loginOneUserService(data) {
 
     const user = await getUserByNumber(mobileNumber);
 
-    if (!user) throw new BadRequest("BadRequest", "No user is registered via this mobile number");
+    if (!user) throw new BadRequest("No user is registered via this mobile number");
     //here we can directly call the generalError class it is ok but for the reusability and maintainability 
     //we call user not found and it will also make the code cleaner
     
 
     const isMatch = await bcryptPasswordCheck(password, user.password)
-    if (!isMatch) throw new BadRequest("Bad Request", "Invalid password");
+    if (!isMatch) throw new BadRequest("Invalid password");
 
 
     const token = generateToken({ id: user._id, role: user.role });

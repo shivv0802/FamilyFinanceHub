@@ -27,9 +27,8 @@ export const login = async (userData) => {
     const response = await api.post('/users/login', userData);
     return response.data;
   } catch (error) {
-    // Return backend error or default error message
-    throw error.response?.data || error.message;
+    // Make sure we always throw something consistent
+    throw error;
   }
 };
 
-export default api;

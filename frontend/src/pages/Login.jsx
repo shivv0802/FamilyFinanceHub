@@ -66,10 +66,15 @@ const Login = () => {
             }, 1000)
 
         } catch (error) {
-            const backendMessage = error.response?.data?.error || error.response?.data?.message;
+            console.log("FULL BACKEND ERROR:", error);
+
+            const backendMessage = error.response?.data?.error || error.response?.data?.message || error.message;
+
+
+
             setMessage({
                 type: 'error',
-                text: backendMessage || 'Login failed. Please try again.'
+                text: backendMessage || 'Login failed. Please check your credentials and try again.'
             });
         } finally {
             setLoading(false);
