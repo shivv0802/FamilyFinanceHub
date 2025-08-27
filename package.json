@@ -20,5 +20,8 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.2.0"
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0"
   }
 }
