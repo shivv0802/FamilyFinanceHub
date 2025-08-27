@@ -34,8 +34,41 @@ async function loginUser(req,res ,next) {
 }
 
 
+const User = require("../models/user.model");
+const FamilyGroupUser = require("../models/familyGroupUser.model");
+
+async function searchUsers(req, res, next){
+  try {
+    const { search, excludeIds } = req.query;
+
+    // Search query
+    const regex = search ? new RegExp(search, "i") : null;
+    const query = regex
+      ? { $or: [{ firstName: regex }, { lastName: regex }, { mobileNumber: regex }] }
+      : {};
+
+    // Exclude IDs (comma separated from frontend)
+    let excludeArray = [];
+    if (excludeIds) {
+      excludeArray = excludeIds.split(",").map((id) => id.trim());
+    }
+
+    const matchingUsers = await User.find({
+      ...query,
+      _id: { $nin: excludeArray }
+    }).select("_id firstName lastName mobileNumber");
+
+    res.json({ data: matchingUsers });
+  } catch (err) {
+    next(err);
+  }
+};
+
+ 
+
 
 module.exports = {
     signup,
-    loginUser
+    loginUser,
+    searchUsers
 };

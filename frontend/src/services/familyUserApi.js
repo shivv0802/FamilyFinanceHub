@@ -57,3 +57,16 @@ export const removeUserFromFamilyGroup = async (id, token) => {
     throw error.response?.data || { message: error.message };
   }
 };
+
+
+// Get all users (for adding to family group)
+export const getAllUsers = async (token) => {
+  try {
+    const res = await api.get("/all-users", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: error.message };
+  }
+};

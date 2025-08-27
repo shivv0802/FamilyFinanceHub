@@ -1,3 +1,4 @@
+// FamilyUser.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -8,19 +9,18 @@ import {
   updateFamilyGroupUser,
   removeUserFromFamilyGroup,
 } from "../services/familyUserApi";
+
+import UserDropdown from "../pages/userDropdown";
 import "../styles/familyUser.css";
 
 export default function FamilyUser() {
   const { familyGroupId } = useParams();
-  const [users, setUsers] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    mobileNumber: "",
-    password: "",
+    userId: "",
     role: "user",
   });
-  const [editingUser, setEditingUser] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState("user");
@@ -28,113 +28,126 @@ export default function FamilyUser() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Decode token to get role
+  // ✅ Decode JWT token to get role
   useEffect(() => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
         setCurrentUserRole(decoded.role || "user");
-      } catch {
+      } catch (err) {
+        console.error("Token decode failed:", err);
         setCurrentUserRole("user");
       }
-    } else {
-      setCurrentUserRole("user");
     }
   }, [token]);
 
-  const fetchUsers = async () => {
+  // ✅ Fetch family members
+  const fetchMembers = async () => {
     try {
       const res = await getUsersByFamilyGroup(familyGroupId, token);
-      setUsers(res.data);
+      setMembers(res.data || []);
     } catch (err) {
-      setMessage({ type: "error", text: err?.message || "Failed to load users" });
+      setMessage({
+        type: "error",
+        text: err?.response?.data?.message || "Failed to load members",
+      });
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchMembers();
     // eslint-disable-next-line
-  }, [familyGroupId, token]);
+  }, [familyGroupId]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // ✅ Select user from dropdown
+  const handleSelectUser = (user) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      userId: user._id,
     }));
   };
 
+  // ✅ Submit add / update
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       let res;
-
-      // Build data to send
-      // Optional: only include password if not empty for updates
-      const dataToSend = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        mobileNumber: formData.mobileNumber,
-        role: formData.role,
-      };
-      if (formData.password) {
-        dataToSend.password = formData.password;
-      }
-
-      if (editingUser) {
-        res = await updateFamilyGroupUser(editingUser._id, dataToSend, token);
+      if (editingUser?._id) {
+        // Update role
+        res = await updateFamilyGroupUser(
+          editingUser._id,
+          { role: formData.role },
+          token
+        );
       } else {
+        // Add new user → role always "user"
+        if (!formData.userId) {
+          setMessage({ type: "error", text: "Please select a user" });
+          setLoading(false);
+          return;
+        }
         res = await addUserToFamilyGroup(
-          { ...dataToSend, familyGroupId },
+          { userId: formData.userId, familyGroupId, role: "user" },
           token
         );
       }
-      setMessage({ type: "success", text: res.message });
-      setFormData({
-        firstName: "",
-        lastName: "",
-        mobileNumber: "",
-        password: "",
-        role: "user",
+
+      setMessage({
+        type: "success",
+        text: res.message || "Action successful",
       });
       setEditingUser(null);
-      fetchUsers();
+      setFormData({ userId: "", role: "user" });
+      fetchMembers();
     } catch (err) {
-      setMessage({ type: "error", text: err?.message || "Action failed" });
+      setMessage({
+        type: "error",
+        text: err?.response?.data?.message || "Action failed",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (user) => {
-    setEditingUser(user);
-    setFormData({
-      firstName: user.userId.firstName,
-      lastName: user.userId.lastName,
-      mobileNumber: user.userId.mobileNumber,
-      password: "",
-      role: user.role || "user",
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  // ✅ Edit role
+  const handleEdit = (member) => {
+    setEditingUser(member);
+    setFormData({ role: member.role || "user" });
   };
 
+  // ✅ Delete member
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to remove this user?")) return;
+    if (!window.confirm("Are you sure you want to remove this member?")) return;
     try {
       const res = await removeUserFromFamilyGroup(id, token);
-      setMessage({ type: "success", text: res.message });
-      fetchUsers();
+      setMessage({
+        type: "success",
+        text: res.message || "Member removed successfully",
+      });
+      fetchMembers();
     } catch (err) {
-      setMessage({ type: "error", text: err?.message || "Delete failed" });
+      setMessage({
+        type: "error",
+        text: err?.response?.data?.message || "Delete failed",
+      });
     }
+  };
+
+  // ✅ Add member mode
+  const handleAddNew = () => {
+    setEditingUser({});
+    setFormData({ userId: "", role: "user" });
   };
 
   return (
     <div className="family-group-wrapper">
       {/* Sidebar */}
       <div className="sidebar">
-        <h2 style={{ cursor: "pointer" }}>Family Hub</h2>
+        <h2 style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
+          Family Hub
+        </h2>
         <ul>
           <li onClick={() => navigate("/familyGroup")}>Family Groups</li>
           <li>Expenses</li>
@@ -143,7 +156,7 @@ export default function FamilyUser() {
         </ul>
       </div>
 
-      {/* Main */}
+      {/* Main Content */}
       <div className="family-group-container">
         <h1>Family Members</h1>
         <p>View and manage all members of this family group.</p>
@@ -152,149 +165,98 @@ export default function FamilyUser() {
           <div className={`alert alert-${message.type}`}>{message.text}</div>
         )}
 
-        {/* Admin Form */}
-        {currentUserRole === "admin" && (
-          <form onSubmit={handleSubmit} className="group-form">
-            <h2>{editingUser ? "Update Member" : "Add New Member"}</h2>
-
-            <div className="form-group">
-              <label>First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Mobile Number</label>
-              <input
-                type="tel"
-                name="mobileNumber"
-                value={formData.mobileNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>
-                Password {editingUser ? "(Leave blank to keep unchanged)" : ""}
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                {...(!editingUser && { required: true })}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Role</label>
-              <select name="role" value={formData.role} onChange={handleChange}>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading
-                ? "Saving..."
-                : editingUser
-                ? "Update Member"
-                : "Add Member"}
-            </button>
-
-            {editingUser && (
-              <button
-                type="button"
-                className="cancel-btn"
-                onClick={() => {
-                  setEditingUser(null);
-                  setFormData({
-                    firstName: "",
-                    lastName: "",
-                    mobileNumber: "",
-                    password: "",
-                    role: "user",
-                  });
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </form>
-        )}
-
-        {/* Users List */}
         <div className="groups-list">
           <h2>Members</h2>
-          {users.length === 0 ? (
-            <p>No members found</p>
-          ) : (
-            <ul>
-              {users.map((user) => (
-                <li key={user._id} className="group-card">
-                  <div>
-                    <h3>
-                      {user.userId.firstName} {user.userId.lastName}
-                      {user.isAdmin && " (Admin)"}
-                    </h3>
-                    <p>Mobile: {user.userId.mobileNumber}</p>
-                  </div>
+          {members.length === 0 && <p>No members found</p>}
 
-                  {currentUserRole === "admin" && (
-                    <div className="actions">
-                      <button
-                        onClick={() => handleEdit(user)}
-                        className="edit-btn"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user._id)}
-                        className="delete-btn"
-                      >
-                        Delete
-                      </button>
+          <ul>
+            {members.map((member) => (
+              <li key={member._id} className="group-card">
+                {editingUser?._id === member._id ? (
+                  // ✅ Edit Form
+                  <form onSubmit={handleSubmit} className="inline-form">
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          role: e.target.value,
+                        }))
+                      }
+                      required
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    <button type="submit" className="submit-btn" disabled={loading}>
+                      {loading ? "Saving..." : "Update"}
+                    </button>
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={() => setEditingUser(null)}
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <div>
+                      <h3>
+                        {member.userId.firstName} {member.userId.lastName}{" "}
+                        {member.role === "admin" && " (Admin)"}
+                      </h3>
+                      <p>Mobile: {member.userId.mobileNumber}</p>
                     </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
 
-          {/* Add Member Button, shown after user list */}
+                    {currentUserRole === "admin" && (
+                      <div className="actions">
+                        <button
+                          onClick={() => handleEdit(member)}
+                          className="edit-btn"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(member._id)}
+                          className="delete-btn"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </li>
+            ))}
+
+            {/* ✅ Add Member Form */}
+            {editingUser && !editingUser._id && (
+              <li className="group-card">
+                <form onSubmit={handleSubmit} className="inline-form">
+                  <UserDropdown
+                    familyGroupId={familyGroupId}
+                    onSelectUser={handleSelectUser}
+                  />
+                  <button type="submit" className="submit-btn" disabled={loading}>
+                    {loading ? "Saving..." : "Add"}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setEditingUser(null)}
+                  >
+                    Cancel
+                  </button>
+                </form>
+              </li>
+            )}
+          </ul>
+
+          {/* ✅ Add button for admins */}
           {currentUserRole === "admin" && !editingUser && (
-            <button
-              className="submit-btn"
-              style={{ marginTop: "16px" }}
-              onClick={() => {
-                setEditingUser(null);
-                setFormData({
-                  firstName: "",
-                  lastName: "",
-                  mobileNumber: "",
-                  password: "",
-                  role: "user",
-                });
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-            >
+            <button className="submit-btn" onClick={handleAddNew}>
               Add Member
             </button>
           )}
