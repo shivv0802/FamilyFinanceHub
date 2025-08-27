@@ -1,6 +1,6 @@
 // FamilyUser.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 import {
@@ -145,14 +145,16 @@ export default function FamilyUser() {
     <div className="family-group-wrapper">
       {/* Sidebar */}
       <div className="sidebar">
-        <h2 style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-          Family Hub
+        <h2>
+          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            Family Hub
+          </Link>
         </h2>
         <ul>
-          <li onClick={() => navigate("/familyGroup")}>Family Groups</li>
-          <li>Expenses</li>
-          <li>Budgets</li>
-          <li>Goals</li>
+          <li><Link to="/familyGroup">Family Groups</Link></li>
+          <li><Link to="/expenses">Expenses</Link></li>
+          <li><Link to="/budgets">Budgets</Link></li>
+          <li><Link to="/goals">Goals</Link></li>
         </ul>
       </div>
 
