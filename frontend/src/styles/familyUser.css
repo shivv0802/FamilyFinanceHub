@@ -59,67 +59,48 @@
   color: #721c24;
 }
 
-/* Form */
-.group-form {
+/* Member Card */
+.group-card {
   background: white;
+  border-radius: 12px;
   padding: 20px;
-  border-radius: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-}
-.group-form h2 {
   margin-bottom: 15px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Member Details */
+.group-card h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
   color: #333;
 }
-.group-form .form-group {
-  margin-bottom: 15px;
+.group-card p {
+  margin: 0;
+  color: #555;
 }
-.group-form label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #444;
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
 }
-.group-form input,
-.group-form textarea {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e1e5e9;
-  border-radius: 10px;
-  font-size: 1rem;
-  background: #f8f9fa;
-  transition: 0.3s;
-}
-.group-form input:focus,
-.group-form textarea:focus {
-  outline: none;
-  border-color: #667eea;
-  background: white;
-}
-.submit-btn {
-  padding: 12px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-right: 10px;
-}
-.cancel-btn {
-  padding: 12px 20px;
-  background: #ddd;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
+
 .edit-btn,
-.delete-btn {
+.delete-btn,
+.submit-btn,
+.cancel-btn {
   padding: 8px 12px;
-  margin-left: 5px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
 }
 .edit-btn {
   background: #f1c40f;
@@ -129,34 +110,63 @@
   background: #e74c3c;
   color: white;
 }
-
-/* List */
-.groups-list ul {
-  list-style: none;
-  padding: 0;
+.submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
 }
-.group-card {
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+.cancel-btn {
+  background: #ddd;
+}
+
+/* Inline Form inside card */
+.inline-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Saare elements column me */
+  gap: 10px;
+  width: 100%;
+}
+.inline-form input,
+.inline-form select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #e1e5e9;
+  font-size: 1rem;
+  background: #f8f9fa;
+  transition: 0.3s;
+}
+.inline-form input:focus,
+.inline-form select:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
 }
 
+/* Form actions - Add upar, Cancel neeche */
+.form-actions {
+  display: flex;
+  flex-direction: column;  
+  gap: 10px;
+  width: 100%;
+}
+.form-actions .submit-btn {
+  order: 1; /* Add button pehle */
+}
+.form-actions .cancel-btn {
+  order: 2; /* Cancel neeche */
+}
 
+/* Add Member Button */
+.groups-list > .submit-btn {
+  margin-top: 15px;
+  width: fit-content;
+}
 
-
-
-
+/* Admin Actions (optional extra buttons) */
 .admin-actions {
   margin-top: 20px;
   display: flex;
   gap: 10px;
 }
-
 .admin-actions .submit-btn,
 .admin-actions .edit-btn,
 .admin-actions .delete-btn {
@@ -166,7 +176,6 @@
   cursor: pointer;
   font-weight: 500;
 }
-
 .admin-actions .submit-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -178,4 +187,19 @@
 .admin-actions .delete-btn {
   background: #e74c3c;
   color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .group-card {
+    flex-direction: column;
+  }
+  .actions {
+    justify-content: flex-start;
+  }
+  .inline-form input,
+  .inline-form select,
+  .inline-form button {
+    flex: 1 1 100%;
+  }
 }

@@ -145,3 +145,14 @@
   justify-content: space-between;
   align-items: center;
 }
+
+
+.groups-list h3 {
+  cursor: pointer; /* finger cursor */
+  transition: color 0.3s ease;
+}
+
+.groups-list h3:hover {
+  color: #007bff; /* optional hover effect (blue color) */
+  text-decoration: underline; /* optional underline */
+}

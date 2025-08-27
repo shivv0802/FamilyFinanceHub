@@ -8,6 +8,8 @@ import {
 import "../styles/familyGroup.css"
 import { useNavigate } from "react-router-dom";
 
+import { Link } from "react-router-dom";
+
 
 export default function FamilyGroup() {
   const [groups, setGroups] = useState([]);
@@ -95,14 +97,14 @@ export default function FamilyGroup() {
     <div className="family-group-wrapper">
       {/* Sidebar */}
       <div className="sidebar">
-        <h2>Family Hub</h2>
-        <ul>
-          <li className="active">Family Groups</li>
-          <li>Expenses</li>
-          <li>Budgets</li>
-          <li>Goals</li>
-        </ul>
-      </div>
+  <h2>Family Hub</h2>
+  <ul>
+    <li><Link to="/familyGroup">Family Groups</Link></li>
+    <li><Link to="/expenses">Expenses</Link></li>
+    <li><Link to="/budgets">Budgets</Link></li>
+    <li><Link to="/goals">Goals</Link></li>
+  </ul>
+</div>
 
       {/* Main */}
       <div className="family-group-container">
