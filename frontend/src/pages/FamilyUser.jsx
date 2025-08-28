@@ -1,6 +1,6 @@
 // FamilyUser.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 import {
@@ -25,7 +25,6 @@ export default function FamilyUser() {
   const [loading, setLoading] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState("user");
 
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   // ✅ Decode JWT token to get role
