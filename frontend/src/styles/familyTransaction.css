@@ -1,0 +1,186 @@
+.family-group-wrapper {
+  display: flex;
+  height: 100vh;
+  background: #f9fafb;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #2c3e50;
+  color: #fff;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li,
+.sidebar-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  color: white;
+}
+
+/* Active sidebar item */
+.sidebar ul li.active,
+.sidebar-item.active {
+  background: #1abc9c;
+  font-weight: bold;
+  color: white;
+}
+
+/* Sidebar hover effect */
+.sidebar ul li:hover,
+.sidebar-item:hover {
+  background: rgba(17, 25, 40, 0.9); /* Dark navy translucent */
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  color: white;
+}
+
+/* Main Container */
+.family-group-container {
+  flex: 1;
+  padding: 30px;
+}
+
+.family-group-container h1 {
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.family-group-container p {
+  margin-bottom: 20px;
+  color: #555;
+}
+
+/* Transactions List */
+.groups-list {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.group-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.group-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.group-card p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.group-card small {
+  color: #777;
+}
+
+/* Form - KEEP column layout so form does NOT split into two rows */
+.inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.inline-form input,
+.inline-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inline-form input:focus,
+.inline-form select:focus {
+  outline: none;
+  border-color: #1abc9c;
+}
+
+/* Error */
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: -8px;
+}
+
+/* Buttons */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.submit-btn {
+  background: #1abc9c;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.submit-btn:hover {
+  background: #16a085;
+}
+
+.cancel-btn {
+  background: #e74c3c;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .family-group-wrapper .group-card {
+    flex-direction: column;
+  }
+  .family-group-wrapper .group-actions {
+    justify-content: flex-start;
+  }
+  .family-group-wrapper .inline-form input,
+  .family-group-wrapper .inline-form select,
+  .family-group-wrapper .inline-form button {
+    width: 100%;
+  }
+}

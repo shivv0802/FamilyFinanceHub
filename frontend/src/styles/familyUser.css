@@ -5,62 +5,62 @@
 }
 
 /* Sidebar */
-.sidebar {
+.family-group-wrapper .sidebar {
   width: 220px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 20px;
   border-radius: 0 20px 20px 0;
 }
-.sidebar h2 {
+.family-group-wrapper .sidebar h2 {
   margin-bottom: 30px;
   font-size: 1.5rem;
 }
-.sidebar ul {
+.family-group-wrapper .sidebar ul {
   list-style: none;
 }
-.sidebar li {
+.family-group-wrapper .sidebar li {
   margin: 15px 0;
   cursor: pointer;
   font-weight: 500;
 }
-.sidebar li.active,
-.sidebar li:hover {
+.family-group-wrapper .sidebar li.active,
+.family-group-wrapper .sidebar li:hover {
   text-decoration: underline;
 }
 
 /* Main */
-.family-group-container {
+.family-group-wrapper .family-group-container {
   flex: 1;
   padding: 30px;
   background: #f8f9fa;
 }
-.family-group-container h1 {
+.family-group-wrapper .family-group-container h1 {
   color: #333;
   margin-bottom: 10px;
 }
-.family-group-container p {
+.family-group-wrapper .family-group-container p {
   color: #666;
   margin-bottom: 20px;
 }
 
 /* Alert */
-.alert {
+.family-group-wrapper .alert {
   padding: 12px 16px;
   border-radius: 10px;
   margin-bottom: 20px;
 }
-.alert-success {
+.family-group-wrapper .alert-success {
   background: #d4edda;
   color: #155724;
 }
-.alert-error {
+.family-group-wrapper .alert-error {
   background: #f8d7da;
   color: #721c24;
 }
 
 /* Member Card */
-.group-card {
+.family-group-wrapper .group-card {
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -74,27 +74,27 @@
 }
 
 /* Member Details */
-.group-card h3 {
+.family-group-wrapper .group-card h3 {
   margin: 0 0 5px 0;
   font-size: 1.1rem;
   color: #333;
 }
-.group-card p {
+.family-group-wrapper .group-card p {
   margin: 0;
   color: #555;
 }
 
 /* Actions */
-.actions {
+.family-group-wrapper .actions {
   display: flex;
   gap: 10px;
   flex-shrink: 0;
 }
 
-.edit-btn,
-.delete-btn,
-.submit-btn,
-.cancel-btn {
+.family-group-wrapper .edit-btn,
+.family-group-wrapper .delete-btn,
+.family-group-wrapper .submit-btn,
+.family-group-wrapper .cancel-btn {
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
@@ -102,31 +102,31 @@
   font-weight: 500;
   transition: 0.3s;
 }
-.edit-btn {
+.family-group-wrapper .edit-btn {
   background: #f1c40f;
   color: white;
 }
-.delete-btn {
+.family-group-wrapper .delete-btn {
   background: #e74c3c;
   color: white;
 }
-.submit-btn {
+.family-group-wrapper .submit-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
-.cancel-btn {
+.family-group-wrapper .cancel-btn {
   background: #ddd;
 }
 
 /* Inline Form inside card */
-.inline-form {
+.family-group-wrapper .inline-form {
   display: flex;
-  flex-direction: column; /* Saare elements column me */
+  flex-direction: column;
   gap: 10px;
   width: 100%;
 }
-.inline-form input,
-.inline-form select {
+.family-group-wrapper .inline-form input,
+.family-group-wrapper .inline-form select {
   padding: 10px;
   border-radius: 8px;
   border: 2px solid #e1e5e9;
@@ -134,72 +134,72 @@
   background: #f8f9fa;
   transition: 0.3s;
 }
-.inline-form input:focus,
-.inline-form select:focus {
+.family-group-wrapper .inline-form input:focus,
+.family-group-wrapper .inline-form select:focus {
   outline: none;
   border-color: #667eea;
   background: white;
 }
 
-/* Form actions - Add upar, Cancel neeche */
-.form-actions {
+/* Form actions */
+.family-group-wrapper .form-actions {
   display: flex;
   flex-direction: column;  
   gap: 10px;
   width: 100%;
 }
-.form-actions .submit-btn {
-  order: 1; /* Add button pehle */
+.family-group-wrapper .form-actions .submit-btn {
+  order: 1;
 }
-.form-actions .cancel-btn {
-  order: 2; /* Cancel neeche */
+.family-group-wrapper .form-actions .cancel-btn {
+  order: 2;
 }
 
 /* Add Member Button */
-.groups-list > .submit-btn {
+.family-group-wrapper .groups-list > .submit-btn {
   margin-top: 15px;
   width: fit-content;
 }
 
-/* Admin Actions (optional extra buttons) */
-.admin-actions {
+/* Admin Actions */
+.family-group-wrapper .admin-actions {
   margin-top: 20px;
   display: flex;
   gap: 10px;
 }
-.admin-actions .submit-btn,
-.admin-actions .edit-btn,
-.admin-actions .delete-btn {
+.family-group-wrapper .admin-actions .submit-btn,
+.family-group-wrapper .admin-actions .edit-btn,
+.family-group-wrapper .admin-actions .delete-btn {
   padding: 10px 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
 }
-.admin-actions .submit-btn {
+.family-group-wrapper .admin-actions .submit-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
-.admin-actions .edit-btn {
+.family-group-wrapper .admin-actions .edit-btn {
   background: #f1c40f;
   color: white;
 }
-.admin-actions .delete-btn {
+.family-group-wrapper .admin-actions .delete-btn {
   background: #e74c3c;
   color: white;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-  .group-card {
+  .family-group-wrapper .group-card {
     flex-direction: column;
   }
-  .actions {
+  .family-group-wrapper .actions {
     justify-content: flex-start;
   }
-  .inline-form input,
-  .inline-form select,
-  .inline-form button {
+  .family-group-wrapper .inline-form input,
+  .family-group-wrapper .inline-form select,
+  .family-group-wrapper .inline-form button {
     flex: 1 1 100%;
   }
 }

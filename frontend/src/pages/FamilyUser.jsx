@@ -6,7 +6,6 @@ import { jwtDecode } from "jwt-decode";
 import {
   getUsersByFamilyGroup,
   addUserToFamilyGroup,
-  updateFamilyGroupUser,
   removeUserFromFamilyGroup,
 } from "../services/familyUserApi";
 
@@ -16,7 +15,6 @@ import "../styles/familyUser.css";
 export default function FamilyUser() {
   const { familyGroupId } = useParams();
   const [members, setMembers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
     userId: "",
     role: "user",
@@ -24,6 +22,7 @@ export default function FamilyUser() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState("user");
+  const [addingUser, setAddingUser] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -66,58 +65,42 @@ export default function FamilyUser() {
     }));
   };
 
-  // ✅ Submit add / update
+  // ✅ Submit add
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      let res;
-      if (editingUser?._id) {
-        // Update role
-        res = await updateFamilyGroupUser(
-          editingUser._id,
-          { role: formData.role },
-          token
-        );
-      } else {
-        // Add new user → role always "user"
-        if (!formData.userId) {
-          setMessage({ type: "error", text: "Please select a user" });
-          setLoading(false);
-          return;
-        }
-        res = await addUserToFamilyGroup(
-          { userId: formData.userId, familyGroupId, role: "user" },
-          token
-        );
+      if (!formData.userId) {
+        setMessage({ type: "error", text: "Please select a user" });
+        setLoading(false);
+        return;
       }
+
+      const res = await addUserToFamilyGroup(
+        { userId: formData.userId, familyGroupId, role: "user" },
+        token
+      );
 
       setMessage({
         type: "success",
-        text: res.message || "Action successful",
+        text: res.message || "Member added successfully",
       });
-      setEditingUser(null);
       setFormData({ userId: "", role: "user" });
+      setAddingUser(false);
       fetchMembers();
     } catch (err) {
       setMessage({
         type: "error",
-        text: err?.response?.data?.message || "Action failed",
+        text: err?.response?.data?.message || "Add failed",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Edit role
-  const handleEdit = (member) => {
-    setEditingUser(member);
-    setFormData({ role: member.role || "user" });
-  };
-
-  // ✅ Delete member
-  const handleDelete = async (id) => {
+  // ✅ Remove member
+  const handleRemove = async (id) => {
     if (!window.confirm("Are you sure you want to remove this member?")) return;
     try {
       const res = await removeUserFromFamilyGroup(id, token);
@@ -129,15 +112,9 @@ export default function FamilyUser() {
     } catch (err) {
       setMessage({
         type: "error",
-        text: err?.response?.data?.message || "Delete failed",
+        text: err?.response?.data?.message || "Remove failed",
       });
     }
-  };
-
-  // ✅ Add member mode
-  const handleAddNew = () => {
-    setEditingUser({});
-    setFormData({ userId: "", role: "user" });
   };
 
   return (
@@ -173,67 +150,29 @@ export default function FamilyUser() {
           <ul>
             {members.map((member) => (
               <li key={member._id} className="group-card">
-                {editingUser?._id === member._id ? (
-                  // ✅ Edit Form
-                  <form onSubmit={handleSubmit} className="inline-form">
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          role: e.target.value,
-                        }))
-                      }
-                      required
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                    <button type="submit" className="submit-btn" disabled={loading}>
-                      {loading ? "Saving..." : "Update"}
-                    </button>
-                    <button
-                      type="button"
-                      className="cancel-btn"
-                      onClick={() => setEditingUser(null)}
-                    >
-                      Cancel
-                    </button>
-                  </form>
-                ) : (
-                  <>
-                    <div>
-                      <h3>
-                        {member.userId.firstName} {member.userId.lastName}{" "}
-                        {member.role === "admin" && " (Admin)"}
-                      </h3>
-                      <p>Mobile: {member.userId.mobileNumber}</p>
-                    </div>
+                <div>
+                  <h3>
+                    {member.userId.firstName} {member.userId.lastName}{" "}
+                    {member.role === "admin" && " (Admin)"}
+                  </h3>
+                  <p>Mobile: {member.userId.mobileNumber}</p>
+                </div>
 
-                    {currentUserRole === "admin" && (
-                      <div className="actions">
-                        <button
-                          onClick={() => handleEdit(member)}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(member._id)}
-                          className="delete-btn"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </>
+                {currentUserRole === "admin" && (
+                  <div className="actions">
+                    <button
+                      onClick={() => handleRemove(member._id)}
+                      className="delete-btn"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 )}
               </li>
             ))}
 
             {/* ✅ Add Member Form */}
-            {editingUser && !editingUser._id && (
+            {addingUser && (
               <li className="group-card">
                 <form onSubmit={handleSubmit} className="inline-form">
                   <UserDropdown
@@ -246,7 +185,7 @@ export default function FamilyUser() {
                   <button
                     type="button"
                     className="cancel-btn"
-                    onClick={() => setEditingUser(null)}
+                    onClick={() => setAddingUser(false)}
                   >
                     Cancel
                   </button>
@@ -256,8 +195,8 @@ export default function FamilyUser() {
           </ul>
 
           {/* ✅ Add button for admins */}
-          {currentUserRole === "admin" && !editingUser && (
-            <button className="submit-btn" onClick={handleAddNew}>
+          {currentUserRole === "admin" && !addingUser && (
+            <button className="submit-btn" onClick={() => setAddingUser(true)}>
               Add Member
             </button>
           )}
