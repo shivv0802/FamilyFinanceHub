@@ -118,7 +118,7 @@ const Signup = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="firstName">First Name *</label>
+          <label htmlFor="firstName"></label>
           <input
             type="text"
             id="firstName"
@@ -132,7 +132,7 @@ const Signup = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="lastName">Last Name *</label>
+          <label htmlFor="lastName"></label>
           <input
             type="text"
             id="lastName"
@@ -146,7 +146,7 @@ const Signup = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="mobileNumber">Mobile Number *</label>
+          <label htmlFor="mobileNumber"></label>
           <input
             type="tel"
             id="mobileNumber"
@@ -160,7 +160,7 @@ const Signup = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="password">Password *</label>
+          <label htmlFor="password"></label>
           <input
             type="password"
             id="password"
@@ -174,7 +174,7 @@ const Signup = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="role">Role</label>
+          <label htmlFor="role"></label>
           <select
             id="role"
             name="role"

@@ -96,7 +96,7 @@ const Login = () => {
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="mobileNumber">Mobile Number *</label>
+                    <label htmlFor="mobileNumber"></label>
                     <input
                         type="tel"
                         id="mobileNumber"
@@ -110,7 +110,7 @@ const Login = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="password">Password *</label>
+                    <label htmlFor="password"></label>
                     <input
                         type="password"
                         id="password"

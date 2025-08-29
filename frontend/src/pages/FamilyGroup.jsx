@@ -48,6 +48,7 @@ export default function FamilyGroup() {
       setMessage({ type: "success", text: res.message });
       setFormData({ groupName: "", description: "" });
       fetchGroups();
+      window.location.reload();
     } catch (err) {
       setMessage({ type: "error", text: err?.message || "Action failed" });
     } finally {
@@ -61,6 +62,7 @@ export default function FamilyGroup() {
       const res = await deleteFamilyGroup(id, token);
       setMessage({ type: "success", text: res.message });
       fetchGroups();
+      window.location.reload();
     } catch (err) {
       setMessage({ type: "error", text: err?.message || "Remove failed" });
     }
@@ -72,7 +74,7 @@ export default function FamilyGroup() {
       <Sidebar />
 
       {/* ✅ Main Content covers rest of the page */}
-      <div className="family-group-container">
+      <div className="page-content">
         <h1>Family Groups</h1>
         <p>Manage your family's groups easily.</p>
 

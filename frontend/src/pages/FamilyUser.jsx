@@ -1,24 +1,19 @@
-// FamilyUser.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
 import {
   getUsersByFamilyGroup,
   addUserToFamilyGroup,
   removeUserFromFamilyGroup,
 } from "../services/familyUserApi";
-
 import UserDropdown from "../pages/userDropdown";
+import Sidebar from "../pages/Sidebar"; // ✅ Use shared Sidebar
 import "../styles/familyUser.css";
 
 export default function FamilyUser() {
   const { familyGroupId } = useParams();
   const [members, setMembers] = useState([]);
-  const [formData, setFormData] = useState({
-    userId: "",
-    role: "user",
-  });
+  const [formData, setFormData] = useState({ userId: "", role: "user" });
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState("user");
@@ -26,20 +21,17 @@ export default function FamilyUser() {
 
   const token = localStorage.getItem("token");
 
-  // ✅ Decode JWT token to get role
   useEffect(() => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
         setCurrentUserRole(decoded.role || "user");
-      } catch (err) {
-        console.error("Token decode failed:", err);
+      } catch {
         setCurrentUserRole("user");
       }
     }
   }, [token]);
 
-  // ✅ Fetch family members
   const fetchMembers = async () => {
     try {
       const res = await getUsersByFamilyGroup(familyGroupId, token);
@@ -57,31 +49,24 @@ export default function FamilyUser() {
     // eslint-disable-next-line
   }, [familyGroupId]);
 
-  // ✅ Select user from dropdown
-  const handleSelectUser = (user) => {
-    setFormData((prev) => ({
-      ...prev,
-      userId: user._id,
-    }));
-  };
+  const handleSelectUser = (user) =>
+    setFormData((prev) => ({ ...prev, userId: user._id }));
 
-  // ✅ Submit add
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      if (!formData.userId) {
-        setMessage({ type: "error", text: "Please select a user" });
-        setLoading(false);
-        return;
-      }
+    if (!formData.userId) {
+      setMessage({ type: "error", text: "Please select a user" });
+      setLoading(false);
+      return;
+    }
 
+    try {
       const res = await addUserToFamilyGroup(
         { userId: formData.userId, familyGroupId, role: "user" },
         token
       );
-
       setMessage({
         type: "success",
         text: res.message || "Member added successfully",
@@ -99,7 +84,6 @@ export default function FamilyUser() {
     }
   };
 
-  // ✅ Remove member
   const handleRemove = async (id) => {
     if (!window.confirm("Are you sure you want to remove this member?")) return;
     try {
@@ -118,24 +102,12 @@ export default function FamilyUser() {
   };
 
   return (
-    <div className="family-group-wrapper">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <h2>
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-            Family Hub
-          </Link>
-        </h2>
-        <ul>
-          <li><Link to="/familyGroup">Family Groups</Link></li>
-          <li><Link to="/expenses">Expenses</Link></li>
-          <li><Link to="/budgets">Budgets</Link></li>
-          <li><Link to="/goals">Goals</Link></li>
-        </ul>
-      </div>
+    <div className="page-wrapper">
+      {/* ✅ Shared Sidebar */}
+      <Sidebar />
 
-      {/* Main Content */}
-      <div className="family-group-container">
+      {/* ✅ Main Content */}
+      <div className="page-content">
         <h1>Family Members</h1>
         <p>View and manage all members of this family group.</p>
 
@@ -146,7 +118,6 @@ export default function FamilyUser() {
         <div className="groups-list">
           <h2>Members</h2>
           {members.length === 0 && <p>No members found</p>}
-
           <ul>
             {members.map((member) => (
               <li key={member._id} className="group-card">
@@ -157,7 +128,6 @@ export default function FamilyUser() {
                   </h3>
                   <p>Mobile: {member.userId.mobileNumber}</p>
                 </div>
-
                 {currentUserRole === "admin" && (
                   <div className="actions">
                     <button
@@ -170,8 +140,6 @@ export default function FamilyUser() {
                 )}
               </li>
             ))}
-
-            {/* ✅ Add Member Form */}
             {addingUser && (
               <li className="group-card">
                 <form onSubmit={handleSubmit} className="inline-form">
@@ -193,8 +161,6 @@ export default function FamilyUser() {
               </li>
             )}
           </ul>
-
-          {/* ✅ Add button for admins */}
           {currentUserRole === "admin" && !addingUser && (
             <button className="submit-btn" onClick={() => setAddingUser(true)}>
               Add Member

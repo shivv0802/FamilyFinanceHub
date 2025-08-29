@@ -1,0 +1,15 @@
+
+/* layout.css */
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.page-content {
+  margin-left: 250px; /* equal to sidebar width */
+  flex: 1;
+  padding: 20px;
+  background: #f9f9f9;
+  min-height: 100vh;
+  overflow-y: auto;
+}

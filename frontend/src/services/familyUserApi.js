@@ -52,6 +52,7 @@ export const removeUserFromFamilyGroup = async (id, token) => {
     const res = await api.delete(`/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    
     return res.data;
   } catch (error) {
     throw error.response?.data || { message: error.message };

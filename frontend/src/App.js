@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import FamilyGroup from './pages/FamilyGroup';
 import FamilyUser from './pages/FamilyUser';
 import FamilyTransaction from './pages/FamilyTransaction';
+import './styles/common.css';
 
 import Budgets from './pages/Budget';
 import Goals from './pages/Goal';

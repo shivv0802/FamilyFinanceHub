@@ -27,8 +27,12 @@ export const login = async (userData) => {
     const response = await api.post('/users/login', userData);
     return response.data;
   } catch (error) {
-    // Make sure we always throw something consistent
-    throw error;
+    // Always extract backend response if exists
+    if (error.response && error.response.data) {
+      throw error.response.data; // backend ka JSON throw karo
+    }
+    throw { message: error.message || 'Something went wrong' };
   }
 };
+
 

@@ -38,4 +38,5 @@ export const deleteFamilyGroup = async (id, token) => {
   const api = getApi(token);
   const res = await api.delete(`/${id}`);
   return res.data;
+  
 };
